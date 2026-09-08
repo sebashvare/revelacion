@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&amp;family=Karla:wght@300;400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: 'Karla', ui-sans-serif, system-ui, sans-serif; color: #1C1A19; -webkit-font-smoothing: antialiased; }
+    .serif { font-family: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif; }
+    a { color: #3D3835; } a:hover { color: #1C1A19; }
+    a, button { touch-action: manipulation; }
+    a:focus-visible { outline: 2px solid #1C1A19; outline-offset: 3px; border-radius: 6px; }
+    .eti { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #767068; }
+    @keyframes latir { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+    .latido { animation: latir 1.8s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .latido { animation: none; }
+      *, *::before, *::after { transition-duration: 1ms !important; }
+    }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 900px; box-sizing: border-box; position: relative; overflow: hidden; background: #FAFAF8;">
+
+  <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background-image: url(./grano.png), linear-gradient(rgba(250,250,248,0.35), rgba(250,250,248,0.35)), url(./fondo.jpg); background-size: auto, auto, cover; background-position: 0 0, 0 0, center; background-repeat: repeat, no-repeat, no-repeat;"></div>
+
+  <div style="position: relative; display: flex; flex-direction: column; gap: 32px; padding: 52px 22px 44px;">
+
+    <!-- Arco mini: el mismo díptico, en pequeño -->
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div style="width: 168px; height: 146px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: 35px 35px 14px 14px; overflow: hidden; background: #FAFAF8; box-shadow: 0 16px 34px rgba(28,26,25,0.16);">
+        <div style="position: relative; overflow: hidden;">
+          <img src="mama-nina.jpg" width="600" height="800" alt="La mamá de niña" style="display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;">
+          <div aria-hidden="true" style="position: absolute; inset: 0; background: {{ tinteRosa }};"></div>
+        </div>
+        <div style="position: relative; overflow: hidden;">
+          <img src="papa-nino.jpg" width="600" height="800" alt="El papá de niño" style="display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;">
+          <div aria-hidden="true" style="position: absolute; inset: 0; background: {{ tinteAzul }};"></div>
+        </div>
+      </div>
+
+      <div class="eti" style="margin-top: 20px;">Ya votaste</div>
+      <div class="serif" style="margin-top: 8px; text-align: center; font-size: 42px; font-weight: 300; line-height: 1.02;">Gracias,<br><span style="font-style: italic;">Ana</span></div>
+      <div style="margin-top: 6px; font-size: 14px; color: #767068;">{{ totalTexto }}</div>
+    </div>
+
+    <!-- Barras en vivo -->
+    <div style="display: flex; flex-direction: column; gap: 22px; background: #FFFFFF; border: 1px solid #EFEBE6; border-radius: 20px; padding: 24px 20px; box-shadow: 0 12px 28px rgba(28,26,25,0.07);">
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="papa-nino.jpg" width="600" height="800" alt="" style="width: {{ tamNino }}; height: {{ tamNino }}; border-radius: 999px; object-fit: cover; object-position: 50% 20%; border: 2px solid #FFFFFF; box-shadow: 0 2px 8px rgba(28,26,25,0.16);">
+          <div style="flex-grow: 1;">
+            <div style="font-size: 15px; color: #2C4A66;">Niño</div>
+            <div style="font-size: 12px; color: #A9A29B;">como papá</div>
+          </div>
+          <div class="serif" style="font-size: 28px; font-weight: 400; font-variant-numeric: tabular-nums; color: #2C4A66;">{{ ninoPct }}%</div>
+        </div>
+        <div style="height: 14px; border-radius: 999px; background: #F1EFEC; overflow: hidden;">
+          <div style="height: 100%; border-radius: 999px; width: {{ ninoAncho }}; background: linear-gradient(90deg, {{ azul }}, #A9C6E3); transition: width 400ms ease-out;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="mama-nina.jpg" width="600" height="800" alt="" style="width: {{ tamNina }}; height: {{ tamNina }}; border-radius: 999px; object-fit: cover; object-position: 50% 20%; border: 2px solid #FFFFFF; box-shadow: 0 2px 8px rgba(28,26,25,0.16);">
+          <div style="flex-grow: 1;">
+            <div style="font-size: 15px; color: #6B3B55;">Niña</div>
+            <div style="font-size: 12px; color: #A9A29B;">como mamá</div>
+          </div>
+          <div class="serif" style="font-size: 28px; font-weight: 400; font-variant-numeric: tabular-nums; color: #6B3B55;">{{ ninaPct }}%</div>
+        </div>
+        <div style="height: 14px; border-radius: 999px; background: #F1EFEC; overflow: hidden;">
+          <div style="height: 100%; border-radius: 999px; width: {{ ninaAncho }}; background: linear-gradient(90deg, {{ rosa }}, #E0B7CE); transition: width 400ms ease-out;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: #767068;">
+        <span class="latido" aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: #6F9C7C;"></span>
+        Se actualiza solo, en vivo
+      </div>
+    </div>
+
+    <!-- Registro del invitado -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="eti">Tu registro</div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; font-size: 15px;">
+        <span style="color: #767068;">Tu apuesta</span>
+        <span style="display: inline-flex; align-items: center; gap: 8px; color: #6B3B55;">
+          <span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 999px; background: {{ rosa }};"></span>Niña, como mamá
+        </span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; font-size: 15px;">
+        <span style="color: #767068;">Asistencia</span>
+        <span style="color: #3D3835;">Confirmada</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="font-size: 15px; color: #767068;">Tu mensaje</span>
+        <span class="serif" style="font-size: 20px; font-weight: 300; font-style: italic; color: #3D3835; line-height: 1.45; text-wrap: pretty;">Que llegue con salud y con esa terquedad tuya.</span>
+      </div>
+    </div>
+
+    <div style="text-align: center; font-size: 12px; color: #A9A29B;">[Sábado 10 de octubre] · [5:00 PM] · <a href="#" style="border-bottom: 1px solid #D9D3CC;">Ver ubicación</a></div>
+
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{
+  "azul": { "editor": "color", "default": "#CFE0F0", "options": ["#CFE0F0", "#BBD3EA", "#C7D9E8", "#A9C6E3"] },
+  "rosa": { "editor": "color", "default": "#EFD3E2", "options": ["#EFD3E2", "#E7C3D8", "#DCC9E8", "#F0C8D9"] },
+  "intensidadTinte": { "editor": "range", "default": 26, "min": 0, "max": 60, "step": 2, "unit": "%", "section": "Fotos" },
+  "votosNino": { "editor": "int", "default": 12, "min": 0, "max": 400, "section": "Datos" },
+  "votosNina": { "editor": "int", "default": 22, "min": 0, "max": 400, "section": "Datos" },
+  "$preview": { "width": 390, "height": 900 }
+}'>
+class Component extends DCLogic {
+  tinte(hex) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    const rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',');
+    const alto = (this.props.intensidadTinte ?? 26) / 100;
+    return 'linear-gradient(170deg, rgba(' + rgb + ',' + (alto * 0.45).toFixed(3) + ') 0%, rgba(' + rgb + ',' + alto.toFixed(3) + ') 100%)';
+  }
+
+  renderVals() {
+    const nino = this.props.votosNino ?? 12;
+    const nina = this.props.votosNina ?? 22;
+    const total = nino + nina;
+    const ninoPct = total === 0 ? 50 : Math.round((nino / total) * 100);
+    const ninaPct = total === 0 ? 50 : 100 - ninoPct;
+    return {
+      azul: this.props.azul ?? '#CFE0F0',
+      rosa: this.props.rosa ?? '#EFD3E2',
+      tinteAzul: this.tinte(this.props.azul ?? '#CFE0F0'),
+      tinteRosa: this.tinte(this.props.rosa ?? '#EFD3E2'),
+      ninoPct: ninoPct,
+      ninaPct: ninaPct,
+      ninoAncho: ninoPct + '%',
+      ninaAncho: ninaPct + '%',
+      // El lado que va ganando lleva la foto un punto más grande.
+      tamNino: ninoPct >= ninaPct ? '46px' : '38px',
+      tamNina: ninaPct > ninoPct ? '46px' : '38px',
+      totalTexto: total === 1 ? '1 voto' : total + ' votos',
+    };
+  }
+}
+</script>
+</body>
+</html>

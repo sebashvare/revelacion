@@ -1,0 +1,58 @@
+/* =====================================================================
+   Fuente de Tailwind. NO es el archivo que sirve la página: eso es
+   styles/app.css, que sale de compilar este con:
+
+       npm run build:css
+
+   Hay que recompilar cada vez que se añada o quite una clase en
+   index.html o en src/*.js.
+   ===================================================================== */
+@import "tailwindcss";
+
+/* Dónde buscar clases. src/*.js importa: app.js alterna clases por nombre
+   (bg-destructive, text-success-foreground…) y sin esto no se generarían. */
+@source "../index.html";
+@source "../src/**/*.js";
+
+/* Los valores viven en el <style> plano de index.html para que el fondo
+   pinte antes que este archivo. Aquí solo se mapean a utilidades. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-nino: var(--nino);
+  --color-nino-foreground: var(--nino-foreground);
+  --color-nina: var(--nina);
+  --color-nina-foreground: var(--nina-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-accent: var(--destructive-accent);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-vivo: var(--vivo);
+}
+
+@layer base {
+  /* body sin fondo a proposito: el suelo lo pinta html. */
+  body { color: var(--foreground); }
+  button, a, label, input, textarea { touch-action: manipulation; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+}
+
+@layer utilities {
+  @keyframes flotar {
+    0%, 100% { transform: translateY(0) rotate(var(--giro, 0deg)); }
+    50%      { transform: translateY(-14px) rotate(var(--giro, 0deg)); }
+  }
+  .flota { animation: flotar 7s ease-in-out infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin, .flota { animation: none; }
+  *, *::before, *::after { transition-duration: 1ms !important; }
+}

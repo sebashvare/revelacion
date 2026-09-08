@@ -1,0 +1,41 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 1408,
+      "title": "Invitación · flujo completo",
+      "is_interactive": true
+    },
+    {
+      "file": "Resultados.dc.html",
+      "x": 560,
+      "y": 0,
+      "w": 390,
+      "h": 856,
+      "title": "Ya votó · resultados en vivo"
+    },
+    {
+      "file": "Estados.dc.html",
+      "x": 1120,
+      "y": 0,
+      "w": 430,
+      "h": 1120,
+      "title": "Micro-estados y avisos"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "flujo",
+      "x": 0,
+      "y": -170,
+      "w": 390,
+      "text": "Se vota eligiendo a cuál de los dos se va a parecer el bebé: las tarjetas son las fotos de infancia de los padres.\nEscribe un nombre y toca una foto para ver el spinner, el bloqueo del doble envío y la transición a la barra.\nLos votos de ejemplo (12 / 9) y la fecha son de muestra."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Revelación de Género</title>
+<meta name="description" content="Invitación a la revelación de género. Vota si será niño o niña y confirma tu asistencia.">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/web/fondo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!--
+  1. Los tokens viven en CSS plano, no en el bloque de Tailwind: así el papel
+     pinta de inmediato, sin esperar a que el CDN compile. Tailwind solo los
+     mapea más abajo con @theme inline.
+     La invitación es siempre en claro: no hay bloque .dark.
+-->
+<style>
+  :root {
+    --background: hsl(60 16.7% 97.6%);
+    --foreground: hsl(20 5.7% 10.4%);
+    --card: hsl(0 0% 100%);
+    --muted: hsl(36 15.2% 93.5%);
+    --muted-foreground: hsl(34.3 6.3% 43.5%);
+    --border: hsl(33.3 22% 92%);
+    --input: hsl(33.3 15.3% 88.4%);
+    --ring: hsl(20 5.7% 10.4%);
+    --nino: hsl(209.1 52.4% 87.6%);
+    --nino-foreground: hsl(209 39.7% 28.6%);
+    --nina: hsl(327.9 46.7% 88.2%);
+    --nina-foreground: hsl(327.5 28.9% 32.5%);
+    --destructive: hsl(0 50.3% 37.1%);
+    --destructive-foreground: hsl(10.9 100% 97.8%);
+    --destructive-accent: hsl(0 50.3% 37.1%);
+    --success: hsl(130.6 15.3% 21.8%);
+    --success-foreground: hsl(120 30% 96.1%);
+    --vivo: hsl(136 17.5% 52%);
+
+    /* Atmósfera sobre la acuarela. No son superficies del tema. */
+    --velo-nino: linear-gradient(170deg, rgba(207, 224, 240, 0.12) 0%, rgba(207, 224, 240, 0.26) 100%);
+    --velo-nina: linear-gradient(170deg, rgba(239, 211, 226, 0.12) 0%, rgba(239, 211, 226, 0.26) 100%);
+    --scrim-nino: linear-gradient(180deg, rgba(20, 32, 44, 0) 0%, rgba(20, 32, 44, 0.78) 62%);
+    --scrim-nina: linear-gradient(180deg, rgba(44, 22, 34, 0) 0%, rgba(44, 22, 34, 0.78) 62%);
+    --sombra-tarjeta: 0 12px 28px rgba(28, 26, 25, 0.10);
+    --sombra-arco: 0 24px 48px rgba(28, 26, 25, 0.18), 0 2px 6px rgba(28, 26, 25, 0.08);
+    /* Colores muestreados de assets/Background.jpg. El degradado los usa para
+       que el fondo funcione a cualquier ancho: una imagen con `cover` en una
+       ventana ancha solo enseña una tira central lavada. */
+    --acuarela-azul: #CEE5F1;
+    --acuarela-azul-hondo: #BBDCF0;
+    --acuarela-crema: #F7F3F2;
+    --acuarela-rosa: #F9D5DC;
+    --acuarela-rosa-hondo: #F4C3CE;
+    --dorado: #D9B36A;
+    /* La imagen queda solo como textura; el color lo lleva el degradado. */
+    --textura-fondo: 0.22;
+    /* El suelo, en un token porque lo usan html y la portada. */
+    --suelo:
+      radial-gradient(90% 45% at 12% 0%, var(--acuarela-azul-hondo) 0%, transparent 62%),
+      radial-gradient(90% 45% at 88% 100%, var(--acuarela-rosa-hondo) 0%, transparent 62%),
+      linear-gradient(168deg, var(--acuarela-azul) 0%, var(--acuarela-crema) 48%, var(--acuarela-rosa) 100%);
+  }
+
+  /* El suelo va aquí, en el elemento raíz. Ponerlo en un div con z-index -10
+     no funciona: el fondo opaco de html/body lo tapa.
+     Sin `background-attachment: fixed`: eso limita el pintado al viewport y
+     deja una banda dura y sin textura al pie de las páginas largas. Así el
+     degradado recorre el documento entero, del azul de arriba al rosa final. */
+  html {
+    color: var(--foreground);
+    background-color: var(--acuarela-crema);
+    background-image: var(--suelo);
+    min-height: 100%;
+  }
+  .serif { font-family: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif; }
+  body { font-family: 'Karla', ui-sans-serif, system-ui, sans-serif; }
+</style>
+
+<!--
+  2. Tailwind ya compilado. Antes esto era el CDN @tailwindcss/browser, que
+     compila en el navegador al cargar y produce un parpadeo sin estilos.
+     La fuente es styles/tailwind.css; tras tocar clases: npm run build:css
+-->
+<link rel="stylesheet" href="styles/app.css">
+</head>
+
+<body class="text-foreground antialiased">
+
+<!-- Si no hay JS la portada no se podría cerrar: mejor no mostrarla. -->
+<noscript><style>#portada { display: none !important; }</style></noscript>
+
+<!--
+  Portada. No es adorno: los navegadores exigen un gesto del usuario para
+  reproducir audio con sonido, y el toque en «Abrir invitación» es ese gesto.
+  Sin él la canción nunca sonaría. De paso da tiempo a cargar fotos y fuentes.
+-->
+<div id="portada" class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-7 px-8 text-center transition-opacity duration-200"
+     style="background-color: var(--acuarela-crema); background-image: var(--suelo);">
+
+  <div class="w-full max-w-[290px] bg-card p-1.5" style="border-radius: 78px 78px 26px 26px; box-shadow: var(--sombra-arco);">
+    <div class="grid grid-cols-2 gap-[3px] overflow-hidden bg-background"
+         style="aspect-ratio: 340 / 300; border-radius: 72px 72px 20px 20px;">
+      <div class="relative overflow-hidden">
+        <picture class="contents">
+          <source srcset="assets/web/papa-nino.webp" type="image/webp">
+          <img src="assets/web/papa-nino.jpg" width="600" height="800" alt="El papá de niño" class="size-full object-cover object-center">
+        </picture>
+        <div aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nino);"></div>
+      </div>
+      <div class="relative overflow-hidden">
+        <picture class="contents">
+          <source srcset="assets/web/mama-nina.webp" type="image/webp">
+          <img src="assets/web/mama-nina.jpg" width="600" height="800" alt="La mamá de niña" class="size-full object-cover object-center">
+        </picture>
+        <div aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nina);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p class="serif text-[44px] font-light leading-[0.98] tracking-tight">
+      <span class="text-nino-foreground">¿Niño</span>
+      <em class="mx-1 text-[32px] text-muted-foreground">o</em>
+      <span class="text-nina-foreground">Niña?</span>
+    </p>
+    <p class="serif mt-2 text-[22px] font-light italic">Sebastian &amp; Carolina</p>
+  </div>
+
+  <button id="abrir" type="button"
+          class="inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-card px-8 text-[15px] tracking-wide transition active:scale-95"
+          style="box-shadow: var(--sombra-tarjeta);">
+    Abrir invitación
+    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 12h13M13 6l6 6-6 6"/>
+    </svg>
+  </button>
+
+  <p class="flex items-center gap-2 text-[13px] text-muted-foreground">
+    <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>
+    </svg>
+    Se abre con música
+  </p>
+</div>
+
+<!--
+  Fondo en tres capas. El color lo lleva un degradado con los tonos
+  muestreados de assets/Background.jpg: así no depende del recorte y se ve
+  igual en un teléfono de 390px que en una ventana de 2000px, que es donde
+  fallaba antes. La acuarela va encima solo como textura, al 30%.
+-->
+<div aria-hidden="true" class="pointer-events-none fixed inset-0 z-0 bg-cover bg-center"
+     style="background-image: url(assets/web/fondo.jpg); opacity: var(--textura-fondo);"></div>
+<div aria-hidden="true" class="pointer-events-none fixed inset-0 z-0"
+     style="background-image: url(assets/web/grano.png); background-repeat: repeat;"></div>
+
+<!--
+  Globos: SVG, nunca emoji. Viven en los márgenes que quedan vacíos en
+  pantalla ancha; en móvil no hay sitio, así que aparecen desde sm.
+-->
+<div aria-hidden="true" class="pointer-events-none fixed inset-0 z-0 hidden sm:block">
+  <svg class="flota absolute left-[6%] top-[8%] w-24 opacity-80" style="--giro: -6deg;" viewBox="0 0 120 210" fill="none">
+    <ellipse cx="60" cy="62" rx="46" ry="56" fill="#BBDCF0"/>
+    <ellipse cx="44" cy="42" rx="13" ry="18" fill="#FFFFFF" opacity=".45"/>
+    <path d="M60 118l-7 10h14l-7-10Z" fill="#A9CBE4"/>
+    <path d="M60 128c10 16-10 26 0 42s-8 24 0 38" stroke="#C9BBA6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <svg class="flota absolute left-[11%] top-[26%] w-16 opacity-70" style="--giro: 8deg; animation-delay: -2.4s;" viewBox="0 0 120 210" fill="none">
+    <ellipse cx="60" cy="62" rx="46" ry="56" fill="#F4C3CE"/>
+    <ellipse cx="44" cy="42" rx="13" ry="18" fill="#FFFFFF" opacity=".45"/>
+    <path d="M60 118l-7 10h14l-7-10Z" fill="#E4AEBC"/>
+    <path d="M60 128c-10 16 10 26 0 42s8 24 0 38" stroke="#C9BBA6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <svg class="flota absolute right-[7%] top-[12%] w-20 opacity-75" style="--giro: 5deg; animation-delay: -1.2s;" viewBox="0 0 120 210" fill="none">
+    <ellipse cx="60" cy="62" rx="46" ry="56" fill="#F4C3CE"/>
+    <ellipse cx="44" cy="42" rx="13" ry="18" fill="#FFFFFF" opacity=".45"/>
+    <path d="M60 118l-7 10h14l-7-10Z" fill="#E4AEBC"/>
+    <path d="M60 128c10 16-10 26 0 42s-8 24 0 38" stroke="#C9BBA6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <svg class="flota absolute right-[12%] top-[32%] w-14 opacity-65" style="--giro: -9deg; animation-delay: -3.6s;" viewBox="0 0 120 210" fill="none">
+    <ellipse cx="60" cy="62" rx="46" ry="56" fill="#BBDCF0"/>
+    <ellipse cx="44" cy="42" rx="13" ry="18" fill="#FFFFFF" opacity=".45"/>
+    <path d="M60 118l-7 10h14l-7-10Z" fill="#A9CBE4"/>
+    <path d="M60 128c-10 16 10 26 0 42s8 24 0 38" stroke="#C9BBA6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<main class="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col gap-10 px-[22px] pb-16 pt-11">
+
+  <!-- ── HERO ────────────────────────────────────────────────────── -->
+  <header class="flex flex-col items-center">
+
+    <!-- Sobre el fondo estampado el gris no llega a 4.5:1, así que va sobre papel. -->
+    <p class="mb-4 rounded-full bg-card/85 px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-muted-foreground">Revelación de género</p>
+
+    <!--
+      Arco díptico en passe-partout de papel. El radio superior es 72px, NO
+      999px: en 346px de ancho un radio de 999 se recorta a 173 = media
+      circunferencia, y esa curva cortaba las cabezas.
+      El orden es niño · niña, el mismo del titular y el de las tarjetas.
+    -->
+    <div class="w-full bg-card p-1.5" style="border-radius: 78px 78px 26px 26px; box-shadow: var(--sombra-arco);">
+      <div class="grid w-full grid-cols-2 gap-[3px] overflow-hidden bg-background"
+           style="aspect-ratio: 340 / 300; border-radius: 72px 72px 20px 20px;">
+        <div class="relative overflow-hidden">
+          <picture class="contents">
+            <source srcset="assets/web/papa-nino.webp" type="image/webp">
+            <img src="assets/web/papa-nino.jpg" width="600" height="800"
+                 alt="El papá de niño, con camisa a cuadros"
+                 class="size-full object-cover object-center">
+          </picture>
+          <div aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nino);"></div>
+        </div>
+        <div class="relative overflow-hidden">
+          <picture class="contents">
+            <source srcset="assets/web/mama-nina.webp" type="image/webp">
+            <img src="assets/web/mama-nina.jpg" width="600" height="800"
+                 alt="La mamá de niña, sobre un caballito de feria"
+                 class="size-full object-cover object-center">
+          </picture>
+          <div aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nina);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cada palabra en su color: el titular anuncia la votación. -->
+    <h1 class="serif mt-7 text-center text-[58px] font-light leading-[0.98] tracking-tight">
+      <span class="text-nino-foreground">¿Niño</span>
+      <em class="mx-1 text-[40px] text-muted-foreground">o</em>
+      <span class="text-nina-foreground">Niña?</span>
+    </h1>
+
+    <svg aria-hidden="true" class="mt-4" width="132" height="12" viewBox="0 0 132 12" fill="none" stroke="var(--dorado)" stroke-width="1.25" stroke-linecap="round">
+      <path d="M2 6h44M86 6h44"/>
+      <path d="M66 1.5 71 6l-5 4.5L61 6l5-4.5Z" fill="var(--dorado)" stroke="none"/>
+      <circle cx="53" cy="6" r="1.6" fill="var(--dorado)" stroke="none"/>
+      <circle cx="79" cy="6" r="1.6" fill="var(--dorado)" stroke="none"/>
+    </svg>
+
+    <p class="serif mt-4 text-center text-[26px] font-light italic">Sebastian &amp; Carolina</p>
+
+    <!-- Cuenta regresiva -->
+    <div class="mt-7 grid w-full grid-cols-4 rounded-[20px] border border-border bg-card px-2 py-[18px]"
+         style="box-shadow: var(--sombra-tarjeta);">
+      <div class="text-center">
+        <p id="cd-d" class="serif text-[32px] font-light leading-none tabular-nums">00</p>
+        <p class="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">días</p>
+      </div>
+      <div class="border-l border-border text-center">
+        <p id="cd-h" class="serif text-[32px] font-light leading-none tabular-nums">00</p>
+        <p class="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">hrs</p>
+      </div>
+      <div class="border-l border-border text-center">
+        <p id="cd-m" class="serif text-[32px] font-light leading-none tabular-nums">00</p>
+        <p class="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">min</p>
+      </div>
+      <div class="border-l border-border text-center">
+        <p id="cd-s" class="serif text-[32px] font-light leading-none tabular-nums">00</p>
+        <p class="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">seg</p>
+      </div>
+    </div>
+
+    <p id="fecha" class="mt-[18px] text-sm"></p>
+
+    <!-- Dónde: dirección + cómo llegar, que es lo que de verdad se pregunta. -->
+    <div class="mt-5 flex w-full flex-col items-center rounded-[20px] border border-border bg-card p-5 text-center"
+         style="box-shadow: var(--sombra-tarjeta);">
+      <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">Dónde</p>
+
+      <p class="serif mt-2 text-[25px] font-light leading-tight">Centro Comercial Palmetto Plaza</p>
+      <p class="mt-1.5 text-[15px]">Calle 9 # 48&#8209;81 · Segundo piso, local 13</p>
+
+      <p class="mt-3.5 max-w-[30ch] text-[13.5px] leading-relaxed text-muted-foreground text-pretty">
+        Por el lado del Cosechas encuentras el Centro Profesional. Entras allí, subes las escaleras y nos encuentras.
+      </p>
+
+      <a id="mapa" target="_blank" rel="noopener"
+         class="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-input px-5 text-sm transition active:scale-95">
+        <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+        Abrir en Google Maps
+      </a>
+    </div>
+  </header>
+
+  <!-- ── VOTACIÓN ────────────────────────────────────────────────── -->
+  <section id="votacion" class="flex flex-col gap-6 transition-all duration-200 ease-in">
+
+    <!-- RSVP -->
+    <div class="flex flex-col gap-5 rounded-[20px] border border-border bg-card p-5" style="box-shadow: var(--sombra-tarjeta);">
+      <div class="flex flex-col gap-[7px]">
+        <label for="nombre" class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">Tu nombre</label>
+        <input id="nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ana Restrepo"
+               aria-describedby="ayuda-nombre"
+               class="min-h-12 w-full border-0 border-b border-input bg-transparent pb-2 text-[17px] outline-none placeholder:text-muted-foreground/60 focus:border-foreground">
+        <p id="error-nombre" role="alert" class="hidden text-[13px] text-destructive-accent">Escribe al menos 2 letras para poder registrar tu voto.</p>
+        <p id="ayuda-nombre" class="text-[13px] text-muted-foreground">Así sabemos de quién es el voto.</p>
+      </div>
+
+      <div class="flex flex-col gap-[7px]">
+        <label for="mensaje" class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">Un mensaje</label>
+        <textarea id="mensaje" rows="2" maxlength="280" placeholder="Un deseo para el bebé…" aria-describedby="ayuda-mensaje"
+                  class="w-full resize-none border-0 border-b border-input bg-transparent pb-2 text-base leading-relaxed outline-none placeholder:text-muted-foreground/60 focus:border-foreground"></textarea>
+        <p id="ayuda-mensaje" class="text-[13px] text-muted-foreground">Opcional. Lo leeremos el día del evento.</p>
+      </div>
+
+      <label class="flex min-h-11 items-center gap-3 text-[15px]">
+        <input id="asiste" type="checkbox" checked class="size-5 accent-foreground">
+        Sí, cuenten conmigo ese día
+      </label>
+    </div>
+
+    <!-- Tarjetas de voto: las fotos de infancia -->
+    <div class="flex flex-col gap-3.5">
+      <div class="flex flex-col items-center text-center">
+        <p class="serif text-[30px] font-light italic leading-tight">¿A quién se va a parecer?</p>
+        <p class="mt-1.5 rounded-full bg-card/85 px-4 py-1.5 text-[13px] tracking-wide">Toca una foto para votar</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3.5">
+
+        <button id="btn-nino" data-voto type="button" aria-label="Votar niño, como el papá"
+                class="relative h-[240px] overflow-hidden rounded-[22px] bg-nino transition duration-150 ease-out active:scale-[0.97] disabled:opacity-50"
+                style="box-shadow: 0 0 0 3px var(--nino), 0 14px 30px rgba(44, 74, 102, 0.22);">
+          <picture class="contents">
+            <source srcset="assets/web/papa-nino.webp" type="image/webp">
+            <img src="assets/web/papa-nino.jpg" width="600" height="800" alt="" loading="lazy"
+                 class="size-full object-cover object-center">
+          </picture>
+          <span aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nino);"></span>
+          <span class="absolute inset-x-0 bottom-0 px-3 pb-3 pt-[30px] text-center" style="background: var(--scrim-nino);">
+            <span class="serif block text-[32px] font-normal leading-none text-white">Niño</span>
+            <span class="mt-1 block text-[11px] uppercase tracking-[0.16em] text-white/85">como papá</span>
+          </span>
+          <span data-spinner class="absolute inset-0 hidden items-center justify-center bg-black/55">
+            <span class="size-[26px] animate-spin rounded-full border-2 border-white/35 border-t-white"></span>
+          </span>
+        </button>
+
+        <button id="btn-nina" data-voto type="button" aria-label="Votar niña, como la mamá"
+                class="relative h-[240px] overflow-hidden rounded-[22px] bg-nina transition duration-150 ease-out active:scale-[0.97] disabled:opacity-50"
+                style="box-shadow: 0 0 0 3px var(--nina), 0 14px 30px rgba(107, 59, 85, 0.22);">
+          <picture class="contents">
+            <source srcset="assets/web/mama-nina.webp" type="image/webp">
+            <img src="assets/web/mama-nina.jpg" width="600" height="800" alt="" loading="lazy"
+                 class="size-full object-cover object-center">
+          </picture>
+          <span aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nina);"></span>
+          <span class="absolute inset-x-0 bottom-0 px-3 pb-3 pt-[30px] text-center" style="background: var(--scrim-nina);">
+            <span class="serif block text-[32px] font-normal leading-none text-white">Niña</span>
+            <span class="mt-1 block text-[11px] uppercase tracking-[0.16em] text-white/85">como mamá</span>
+          </span>
+          <span data-spinner class="absolute inset-0 hidden items-center justify-center bg-black/55">
+            <span class="size-[26px] animate-spin rounded-full border-2 border-white/35 border-t-white"></span>
+          </span>
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RESULTADOS EN VIVO ──────────────────────────────────────── -->
+  <section id="resultados" class="hidden flex-col gap-6 rounded-[20px] border border-border bg-card p-5 pt-6 opacity-0 transition-opacity duration-300"
+           style="box-shadow: var(--sombra-tarjeta);">
+    <div class="text-center">
+      <p class="serif text-3xl font-light">Gracias por votar</p>
+      <p id="total" class="mt-0.5 text-sm text-muted-foreground">0 votos</p>
+    </div>
+
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-2.5">
+        <div class="flex items-center gap-3">
+          <picture class="contents">
+            <source srcset="assets/web/papa-nino.webp" type="image/webp">
+            <img src="assets/web/papa-nino.jpg" width="600" height="800" alt="" loading="lazy"
+                 class="size-[38px] shrink-0 rounded-full border-2 border-card object-cover"
+                 style="object-position: 50% 20%; box-shadow: 0 2px 8px rgba(0,0,0,0.18);">
+          </picture>
+          <span class="grow text-[15px] text-nino-foreground">Niño</span>
+          <span id="pct-nino" class="serif text-[26px] font-normal tabular-nums text-nino-foreground">50%</span>
+        </div>
+        <div class="h-3.5 w-full overflow-hidden rounded-full bg-muted">
+          <div id="barra-nino" class="h-full rounded-full bg-nino transition-[width] duration-[400ms] ease-out" style="width:50%"></div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2.5">
+        <div class="flex items-center gap-3">
+          <picture class="contents">
+            <source srcset="assets/web/mama-nina.webp" type="image/webp">
+            <img src="assets/web/mama-nina.jpg" width="600" height="800" alt="" loading="lazy"
+                 class="size-[38px] shrink-0 rounded-full border-2 border-card object-cover"
+                 style="object-position: 50% 20%; box-shadow: 0 2px 8px rgba(0,0,0,0.18);">
+          </picture>
+          <span class="grow text-[15px] text-nina-foreground">Niña</span>
+          <span id="pct-nina" class="serif text-[26px] font-normal tabular-nums text-nina-foreground">50%</span>
+        </div>
+        <div class="h-3.5 w-full overflow-hidden rounded-full bg-muted">
+          <div id="barra-nina" class="h-full rounded-full bg-nina transition-[width] duration-[400ms] ease-out" style="width:50%"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+      <span aria-hidden="true" class="size-1.5 rounded-full bg-vivo"></span>
+      Se actualiza solo, en vivo
+    </p>
+  </section>
+
+</main>
+
+<!-- Aviso: no roba foco, se anuncia solo -->
+<div id="aviso" role="status" aria-live="polite"
+     class="pointer-events-none fixed bottom-5 left-4 right-[72px] z-50 translate-y-3 rounded-2xl px-4 py-3 text-sm opacity-0 shadow-lg transition-all duration-300"></div>
+
+<!-- preload="none": el MP3 no se descarga hasta que tocan el boton. -->
+<audio id="cancion" src="assets/web/cancion.mp3" loop preload="none" playsinline></audio>
+
+<button id="musica" type="button" aria-label="Pausar musica" aria-pressed="true"
+        class="fixed bottom-5 right-4 z-40 hidden size-11 items-center justify-center rounded-full border border-border bg-card transition active:scale-90"
+        style="box-shadow: var(--sombra-tarjeta);">
+  <svg data-icono="nota" class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>
+  </svg>
+  <svg data-icono="mudo" class="hidden size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 18V5l11-2v6"/><circle cx="6" cy="18" r="3"/><path d="M4 3l16 18"/>
+  </svg>
+</button>
+
+<script type="module" src="./src/portada.js"></script>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Nada de esto lo usa la página, pero sin este archivo Vercel lo publica
+# y queda accesible por URL.
+design/
+assets/Background.jpg
+assets/*.jpeg
+supabase/
+test/
+node_modules/
+package.json
+package-lock.json
+styles/tailwind.css
+assets/audio/

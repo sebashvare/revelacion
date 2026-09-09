@@ -32,7 +32,7 @@
       "x": 0,
       "y": -170,
       "w": 390,
-      "text": "Se vota eligiendo a cuál de los dos se va a parecer el bebé: las tarjetas son las fotos de infancia de los padres.\nEscribe un nombre y toca una foto para ver el spinner, el bloqueo del doble envío y la transición a la barra.\nLos votos de ejemplo (12 / 9) y la fecha son de muestra."
+      "text": "Se vota el género: ¿niño o niña? Las fotos son los papás de niños, y acompañan a cada opción — no son la pregunta.\nEscribe un nombre y toca una tarjeta para ver el spinner, el bloqueo del doble envío y la transición a la barra.\nDesde la portada también se puede mirar la votación sin votar."
     }
   ],
   "launch": {

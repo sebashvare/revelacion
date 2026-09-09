@@ -75,7 +75,14 @@ function entrar() {
   }, 200);
 }
 
-abrir.addEventListener('click', entrar);
+abrir.addEventListener('click', () => entrar());
+
+// El enlace entra igual, pero avisa a app.js de que hay que enseñar la barra.
+// Un evento en vez de una variable global: los dos módulos siguen sueltos.
+document.getElementById('ver-votacion').addEventListener('click', () => {
+  entrar();
+  document.dispatchEvent(new CustomEvent('invitacion:ver-votacion'));
+});
 
 boton.addEventListener('click', () => {
   silenciado = !silenciado;

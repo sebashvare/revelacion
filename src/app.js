@@ -9,7 +9,7 @@ import { tally } from './tally.js';
 const EVENTO = {
   fechaISO: '2026-09-19T17:00:00-05:00',
   fechaTexto: 'Sábado 19 de septiembre',
-  horaTexto: '[3:30 PM]',
+  horaTexto: '3:30 PM',
   // Búsqueda por dirección: funciona ya. Si quieres el pin exacto, abre el
   // sitio en Google Maps, «Compartir» y pega aquí el enlace maps.app.goo.gl.
   mapaUrl: 'https://www.google.com/maps/search/?api=1&query=' +
@@ -78,13 +78,33 @@ function pintarResultados() {
   $('total').textContent = t.total === 1 ? '1 voto' : `${t.total} votos`;
 }
 
-function mostrarResultados() {
+// Mirar y haber votado son dos estados distintos: antes estaban pegados y
+// enseñar la barra obligaba a esconder la votación.
+const yaVoto = () => {
+  try { return Boolean(localStorage.getItem('voto')); } catch { return false; }
+};
+
+function abrirResultados(titulo) {
+  $('titulo-resultados').textContent = titulo;
+  $('resultados').classList.remove('hidden');
+  $('resultados').classList.add('flex');
+  requestAnimationFrame(() => $('resultados').classList.remove('opacity-0'));
+}
+
+// Solo mirar: la votación se queda disponible debajo.
+function verResultados() {
+  abrirResultados(yaVoto() ? 'Gracias por votar' : 'Así va la votación');
+  const modo = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  // Se espera a que la portada termine de irse, si no el scroll pasa a ciegas.
+  setTimeout(() => $('resultados').scrollIntoView({ behavior: modo, block: 'center' }), 260);
+}
+document.addEventListener('invitacion:ver-votacion', verResultados);
+
+function trasVotar() {
   $('votacion').classList.add('opacity-0', 'scale-95', 'pointer-events-none');
   setTimeout(() => {
     $('votacion').classList.add('hidden');
-    $('resultados').classList.remove('hidden');
-    $('resultados').classList.add('flex');
-    requestAnimationFrame(() => $('resultados').classList.remove('opacity-0'));
+    abrirResultados('Gracias por votar');
   }, 200);
 }
 
@@ -111,7 +131,7 @@ async function votar(prediction) {
       message: $('mensaje').value,
     });
     localStorage.setItem('voto', prediction);
-    mostrarResultados();
+    trasVotar();
     avisar('¡Gracias! Tu voto quedó registrado.', 'ok');
   } catch (e) {
     if (e.code === '23505') {
@@ -130,10 +150,10 @@ $('btn-nina').onclick = () => votar('niña');
 
 // --- Arranque: conteo inicial + suscripción en vivo -------------------
 (async () => {
-  if (localStorage.getItem('voto')) {
+  if (yaVoto()) {
     $('votacion').classList.add('hidden');
-    $('resultados').classList.remove('hidden', 'opacity-0');
-    $('resultados').classList.add('flex');
+    $('resultados').classList.remove('opacity-0');
+    abrirResultados('Gracias por votar');
   }
   try {
     Object.assign(conteo, await obtenerConteo());

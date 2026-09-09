@@ -136,6 +136,15 @@
     </svg>
   </button>
 
+  <!-- Entra igual (mismo gesto, misma música) pero baja a los resultados. -->
+  <button id="ver-votacion" type="button"
+          class="-mt-3 inline-flex min-h-11 items-center gap-2 px-4 text-[14px] underline underline-offset-4 transition active:scale-95">
+    <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 19V11M10 19V5M16 19v-6M22 19H2"/>
+    </svg>
+    Ver cómo va la votación
+  </button>
+
   <p class="flex items-center gap-2 text-[13px] text-muted-foreground">
     <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>
@@ -315,8 +324,8 @@
     <!-- Tarjetas de voto: las fotos de infancia -->
     <div class="flex flex-col gap-3.5">
       <div class="flex flex-col items-center text-center">
-        <p class="serif text-[30px] font-light italic leading-tight">¿A quién se va a parecer?</p>
-        <p class="mt-1.5 rounded-full bg-card/85 px-4 py-1.5 text-[13px] tracking-wide">Toca una foto para votar</p>
+        <p class="serif text-[30px] font-light italic leading-tight">¿Tú qué crees que será?</p>
+        <p class="mt-1.5 rounded-full bg-card/85 px-4 py-1.5 text-[13px] tracking-wide">Toca para votar</p>
       </div>
 
       <div class="grid grid-cols-2 gap-3.5">
@@ -332,7 +341,7 @@
           <span aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nino);"></span>
           <span class="absolute inset-x-0 bottom-0 px-3 pb-3 pt-[30px] text-center" style="background: var(--scrim-nino);">
             <span class="serif block text-[32px] font-normal leading-none text-white">Niño</span>
-            <span class="mt-1 block text-[11px] uppercase tracking-[0.16em] text-white/85">como papá</span>
+            <span class="mt-1 block text-[11px] uppercase tracking-[0.16em] text-white/85">así era papá</span>
           </span>
           <span data-spinner class="absolute inset-0 hidden items-center justify-center bg-black/55">
             <span class="size-[26px] animate-spin rounded-full border-2 border-white/35 border-t-white"></span>
@@ -350,7 +359,7 @@
           <span aria-hidden="true" class="absolute inset-0" style="background: var(--velo-nina);"></span>
           <span class="absolute inset-x-0 bottom-0 px-3 pb-3 pt-[30px] text-center" style="background: var(--scrim-nina);">
             <span class="serif block text-[32px] font-normal leading-none text-white">Niña</span>
-            <span class="mt-1 block text-[11px] uppercase tracking-[0.16em] text-white/85">como mamá</span>
+            <span class="mt-1 block text-[11px] uppercase tracking-[0.16em] text-white/85">así era mamá</span>
           </span>
           <span data-spinner class="absolute inset-0 hidden items-center justify-center bg-black/55">
             <span class="size-[26px] animate-spin rounded-full border-2 border-white/35 border-t-white"></span>
@@ -365,7 +374,7 @@
   <section id="resultados" class="hidden flex-col gap-6 rounded-[20px] border border-border bg-card p-5 pt-6 opacity-0 transition-opacity duration-300"
            style="box-shadow: var(--sombra-tarjeta);">
     <div class="text-center">
-      <p class="serif text-3xl font-light">Gracias por votar</p>
+      <p id="titulo-resultados" class="serif text-3xl font-light">Así va la votación</p>
       <p id="total" class="mt-0.5 text-sm text-muted-foreground">0 votos</p>
     </div>
 
